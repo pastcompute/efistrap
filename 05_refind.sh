@@ -19,6 +19,9 @@ mkdir -p "$MOUNTPOINT/EFI"
 cp -r "$TEMPDIR/$REFIND_BIN/refind" "$MOUNTPOINT/EFI"
 rm -rf "$TEMPDIR"
 
+mkdir -p "$MOUNTPOINT/EFI/shell"
+cp dependencies/Shell_Full.efi "$MOUNTPOINT/EFI/shell"
+
 pushd "$MOUNTPOINT/EFI/refind" > /dev/null
 
 rm -rf drivers*/reiserfs*
@@ -31,7 +34,15 @@ echo textonly >> refind.conf
 cat >> refind.conf <<EOF
 menuentry Debian(USB) {
     loader /EFI/debian/grubx64.efi
-    icon /EFI/refind/icons/os_linux.png
+    icon /EFI/refind/icons/os_debian.png
+}
+menuentry Memtest {
+    loader /EFI/refind/tools_x64/memtest86+x64.efi
+    icon /EFI/refind/icons/tool_shell.png
+}
+menuentry Shell {
+    loader /EFI/shell/shell_full.efi
+    icon /EFI/refind/icons/tool_efi.png
 }
 EOF
 

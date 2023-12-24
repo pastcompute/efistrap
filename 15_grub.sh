@@ -3,6 +3,29 @@
 MOUNTPOINT=${MOUNTPOINT:-/mnt/efistrap}
 MOUNTPOINT2=${MOUNTPOINT2:-/mnt/efistrad}
 
+sed -i -e '/GRUB_CMDLINE_LINUX_DEFAULT/ s/quiet//' "$MOUNTPOINT2/etc/default/grub"
+
+cat > "$MOUNTPOINT2/boot/grub/custom.cfg" <<EOF
+menuentry "rEFInd" {
+        insmod part_gpt
+        insmod chain
+        set root='(hd1,gpt1)'
+        chainloader /EFI/refind/refind_x64.efi
+}
+menuentry "memtest" {
+        insmod part_gpt
+        insmod chain
+        set root='(hd1,gpt1)'
+        chainloader /EFI/refind/tools_x64/memtest86+x64.efi
+}
+menuentry "EFI shell" {
+        insmod part_gpt
+        insmod chain
+        set root='(hd1,gpt1)'
+        chainloader /EFI/shell/Shell_Full.efi
+}
+EOF
+
 ./usb_chroot.sh update-grub
 ./usb_chroot.sh grub-install \
   --efi-directory=/boot/efi \
