@@ -40,6 +40,10 @@ menuentry Memtest {
     loader /EFI/refind/tools_x64/memtest86+x64.efi
     icon /EFI/refind/icons/tool_shell.png
 }
+menuentry ZBM {
+    loader /EFI/ZBM/VMLINUZ.EFI
+    icon /EFI/refind/icons/tool_rescue.png
+}
 menuentry Shell {
     loader /EFI/shell/shell_full.efi
     icon /EFI/refind/icons/tool_efi.png

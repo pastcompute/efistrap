@@ -30,13 +30,27 @@ locale-gen
 apt install -y keyboard-configuration console-setup -y
 apt install -y dosfstools htop git screen vim curl wget man-db
 tasksel install ssh-server
-apt install -y linux-headers-amd64 linux-image-amd64 firmware-linux-nonfree memtest86+ grub-efi-amd64
+apt install -y linux-headers-amd64 linux-image-amd64 firmware-linux-nonfree memtest86+ grub-efi-amd64 arch-install-scripts
 
-apt install network-manager sudo
+apt install network-manager sudo -y
 
 # Set a user and password
 # and dont inherit the hostname...
 echo 'efistrap' > /etc/hostname
+
+cat > /etc/resolv.conf <<EOF
+domain lan
+search lan
+EOF
+
+cat > /etc/hosts <<EOF
+127.0.0.1 localhost efistrapß
+
+# The following lines are desirable for IPv6 capable hosts
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+EOF
 
 echo root:root | chpasswd
 

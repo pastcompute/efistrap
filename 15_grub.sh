@@ -12,6 +12,12 @@ menuentry "rEFInd" {
         set root='(hd1,gpt1)'
         chainloader /EFI/refind/refind_x64.efi
 }
+menuentry "ZFSBootManager" {
+        insmod part_gpt
+        insmod chain
+        set root='(hd1,gpt1)'
+        chainloader /EFI/ZBM/VMLINUZ.EFI
+}
 menuentry "memtest" {
         insmod part_gpt
         insmod chain
