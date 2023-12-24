@@ -32,4 +32,16 @@ apt install -y dosfstools htop git screen vim curl wget man-db
 tasksel install ssh-server
 apt install -y linux-headers-amd64 linux-image-amd64 firmware-linux-nonfree memtest86+ grub-efi-amd64
 
-# The tricky bit - making this bootable
+apt install network-manager sudo
+
+# Set a user and password
+# and dont inherit the hostname...
+echo 'efistrap' > /etc/hostname
+
+echo root:root | chpasswd
+
+useradd -m -s /bin/bash efistrap
+usermod -a -G sudo efistrap
+echo efistrap:efistrap | chpasswd
+
+systemctl enable ssh
