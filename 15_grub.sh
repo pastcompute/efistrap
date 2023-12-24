@@ -5,6 +5,8 @@ MOUNTPOINT2=${MOUNTPOINT2:-/mnt/efistrad}
 
 sed -i -e '/GRUB_CMDLINE_LINUX_DEFAULT/ s/quiet//' "$MOUNTPOINT2/etc/default/grub"
 
+# These will only work as long as the relevant EFI files are installed later
+
 cat > "$MOUNTPOINT2/boot/grub/custom.cfg" <<EOF
 menuentry "rEFInd" {
         insmod part_gpt
@@ -51,7 +53,6 @@ EOF
 # /mnt/efistrap/EFI/debian
 # /mnt/efistrap/EFI/refind
 
-./usb_chroot.sh cp /boot/memtest86+x64.efi /boot/efi/EFI/refind/tools_x64
-
+# Make a reminder text file on how to make 'permanent' depending on the UEFI system
 # shellcheck disable=SC2028
 echo 'efibootmgr -c -l \\EFI\\debian\\grubx64.efi -L grub' > "$MOUNTPOINT/debian-efi-vars.txt"

@@ -125,17 +125,8 @@ debootstrap bookworm "$MOUNTPOINT2"
 
 ./15_grub.sh
 
-mkdir -p "$MOUNTPOINT/EFI/ZBM"
-cp dependencies/ZBM.EFI "$MOUNTPOINT/EFI/ZBM/VMLINUZ.EFI"
+./20_fstab.sh
 
-UUID1=$(blkid -o export -s UUID "${TARGET}1" 2> /dev/null | grep -e ^UUID=)
-UUID2=$(blkid -o export -s UUID "${TARGET}2" 2> /dev/null | grep -e ^UUID=)
+./25_efi_extras.sh
 
-cat > "$MOUNTPOINT2/etc/fstab" <<EOF
-$UUID2 / auto defaults,noatime 0 0
-$UUID1 /boot/efi auto defaults 0 0
-EOF
-
-# Make refind the default
-cp "$MOUNTPOINT/EFI/BOOT/BOOTX64.EFI" "$MOUNTPOINT/EFI/BOOT/BOOTX64.EFI.grub"
-cp "$MOUNTPOINT/EFI/refind/refind_x64.efi" "$MOUNTPOINT/EFI/BOOT/BOOTX64.EFI"
+./30_default_boot.sh
