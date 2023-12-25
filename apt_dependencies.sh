@@ -1,3 +1,3 @@
 #!/bin/bash
 
-apt-get install -y wipefs unzip wget gdisk dosfstools debootstrap arch-install-scripts
+apt-get install -y util-linux unzip wget gdisk dosfstools debootstrap arch-install-scripts
