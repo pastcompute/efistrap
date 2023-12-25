@@ -52,8 +52,7 @@ SysRescue, Kali, Parrot, or a Debian or Ubuntu live image are all worthy and mor
 
 ## Customisation before build
 
-- Change the default hostname at the top of [10_bootstrap.sh]()
-- Change the default passwords / user at the very end of [10_bootstrap.sh]()
+- Change the default hostname at the top of `10_bootstrap.sh`
+- Change the default passwords / user at the very end of `10_bootstrap.sh`
 
-This could all be much more customisable but I haven't bothered as yet, to customise just edit the shell scripts directly. The installed package list is in `10_bootstrap.sh`
-
+This could all be much more customisable but I haven't bothered as yet, to customise just edit the shell scripts directly. The installed package list is in [10_bootstrap.sh](/10_bootstrap.sh)
