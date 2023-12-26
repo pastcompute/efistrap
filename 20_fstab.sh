@@ -7,7 +7,7 @@ set -euo pipefail
 MOUNTPOINT=${MOUNTPOINT:-/mnt/efistrap}
 MOUNTPOINT2=${MOUNTPOINT2:-/mnt/efistrad}
 
-UUID1=$(blkid -o export -s UUID "${TARGET}1" 2> /dev/null | grep -e ^UUID=)
+UUID1=$(blkid -o export -s PARTUUID "${TARGET}1" 2> /dev/null | grep -e ^PARTUUID=)
 UUID2=$(blkid -o export -s UUID "${TARGET}2" 2> /dev/null | grep -e ^UUID=)
 
 cat > "$MOUNTPOINT2/etc/fstab" <<EOF

@@ -58,10 +58,15 @@ SysRescue, Kali, Parrot, or a Debian or Ubuntu live image are all worthy and mor
 
 This could all be much more customisable but I haven't bothered as yet, to customise just edit the shell scripts directly. The installed package list is in [10_bootstrap.sh](/10_bootstrap.sh)
 
+## Debugging
+
+- Mount again using `sudo ./usb_create.sh mount /dev/sdb`
+- Enter a chroot using `sudo ./usb_chroot.sh`
+
 ## Notes
 
 - The script builds directly onto the target USB - including making kernel modules, etc. Your performance may vary...
 - Only x64 EFI is supported
 - At the moment the local directory `./dependencies` is created as the current user for fetching dependencies and is assumed writable
-- By default this uses a local instance of apt-cacher-ng on port 8889 to cache packages for repeated builds (change port at top of `usb_create.sh`), this is left running in a screen session as the local user
+- By default this uses a local instance of apt-cacher-ng on port 8889 to cache packages for repeated builds (change port at top of `usb_create.sh`), this is left running as the local user who runs sudo, the pid file is in `apt-cache/pid`
 - At the moment the local directory `./apt-cache` is created as the current user and assumed writable
