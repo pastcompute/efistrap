@@ -8,6 +8,7 @@ EFISTRAP_DELAY=${EFISTRAP_DELAY:-5}
 MOUNTPOINT=/mnt/efistrap
 MOUNTPOINT2=/mnt/efistrad
 
+export TARGET
 export MOUNTPOINT
 export MOUNTPOINT2
 

@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -euo pipefail
+
+# Fail out if TARGET unset!
+
 MOUNTPOINT=${MOUNTPOINT:-/mnt/efistrap}
 MOUNTPOINT2=${MOUNTPOINT2:-/mnt/efistrad}
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euo pipefail
+
 MOUNTPOINT=${MOUNTPOINT:-/mnt/efistrap}
 MOUNTPOINT2=${MOUNTPOINT2:-/mnt/efistrad}
 
