@@ -35,7 +35,8 @@ apt-get install -y keyboard-configuration console-setup \
   lsb-release eject perl-doc ripgrep \
   strace psmisc network-manager sudo \
   openssh-server openssh-client \
-  arch-install-scripts apt-transport-https ca-certificates
+  arch-install-scripts apt-transport-https ca-certificates \
+  smartmontools
 apt-get install -y
 
 echo RESUME=none > /etc/initramfs-tools/conf.d/noresume.conf
