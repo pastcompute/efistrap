@@ -115,6 +115,8 @@ BindAddress: 127.0.0.1
 ExThreshold: 30
 PidFile: $(pwd)/apt-cache/pid
 EOF
+# We could muck around with passthrough and mappings
+# or just use http during the first stage
 
 # Hacky but gets the job done
 PROXY_PID=$(test -e "$(pwd)/apt-cache/pid" && cat "$(pwd)/apt-cache/pid") || true
@@ -131,12 +133,14 @@ else
 fi
 echo "apt-cacher-ng pid=$(cat "$(pwd)/apt-cache/pid")"
 
+curl "http://localhost:$CACHEPROXY_PORT/acng-report.html?abortOnErrors=aOe&byPath=bP&byChecksum=bS&truncNow=tN&incomAsDamaged=iad&purgeNow=pN&doExpire=Start+Scan+and%2For+Expiration&calcSize=cs&asNeeded=an#bottom"
+
 # We expect this will fail if any partitions are mounted or device is otherwise open
 # So it should protect the operating system drive
 # If not run with sudo, at this point we will also crash out, wipefs won't be in PATH
 wipefs -a "$TARGET"
 
-sgdisk -o -n 1:1M:+1G -t 1:0700 -c 1:EFI -n 2:+1M:0 -t 2:8300 -c 2:debian "$TARGET"
+sgdisk -o -n 1:1M:+1G -t 1:0700 -c 1:EFI -n 2:+1M:0 -t 2:8300 -c 2:DEBIAN "$TARGET"
 
 mkfs.vfat -n "efistrap" "${TARGET}1"
 wipefs -a "${TARGET}2"

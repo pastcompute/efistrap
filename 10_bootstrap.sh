@@ -8,15 +8,14 @@ MY_HOSTNAME=efistrap
 
 export DEBIAN_FRONTEND=noninteractive
 
-apt update
-apt install apt-transport-https ca-certificates -y
 cat > /etc/apt/sources.list <<EOF
-deb https://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
-deb https://security.debian.org/debian-security/ bookworm-security contrib main non-free non-free-firmware
-deb https://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware
-deb https://deb.debian.org/debian bookworm-backports main contrib non-free non-free-firmware
+deb http://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+deb http://security.debian.org/debian-security/ bookworm-security contrib main non-free non-free-firmware
+deb http://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware
+deb http://deb.debian.org/debian bookworm-backports main contrib non-free non-free-firmware
 EOF
-apt update
+apt-get update
+apt-get update
 
 export LC_ALL=en_AU.UTF-8
 export LANG=en_AU
@@ -36,13 +35,15 @@ apt-get install -y keyboard-configuration console-setup \
   lsb-release eject perl-doc ripgrep \
   strace psmisc network-manager sudo \
   openssh-server openssh-client \
-  arch-install-scripts
+  arch-install-scripts apt-transport-https ca-certificates
+apt-get install -y
 
 echo RESUME=none > /etc/initramfs-tools/conf.d/noresume.conf
 
 # This step can be quite slow
-apt install -y memtest86+ grub-efi-amd64 efibootmgr \
+apt-get install -y memtest86+ grub-efi-amd64 efibootmgr \
   linux-headers-amd64 linux-image-amd64 firmware-linux-nonfree
+apt-get install -y
 
 # Set a user and password
 # and dont inherit the hostname...
@@ -77,7 +78,18 @@ Debian GNU/Linux 11 \n \l
 
 EOF
 
-
+# We need non-https during bootstrap so the cache works properly
+# prompt to https when we boot it up later
+cat > /etc/apt/sources.list.replace <<EOF
+deb https://deb.debian.org/debian bookworm main contrib non-free non-free-firmware
+deb https://security.debian.org/debian-security/ bookworm-security contrib main non-free non-free-firmware
+deb https://deb.debian.org/debian bookworm-updates main contrib non-free non-free-firmware
+deb https://deb.debian.org/debian bookworm-backports main contrib non-free non-free-firmware
+EOF
+cat > /usr/local/bin/firstboot.sh <<EOF
+mv /etc/apt/sources.list.replace /etc/apt/sources.list
+EOF
+echo '@reboot /usr/local/bin/firstboot.sh' > /etc/cron.d/run_once
 
 echo root:root | chpasswd
 
