@@ -31,16 +31,18 @@ apt-get install -y keyboard-configuration console-setup \
   dosfstools htop git screen vim curl wget man-db net-tools \
   software-properties-common rsync \
   gdisk parted dosfstools zfsutils-linux btrfs-progs bmon iotop \
-  ntfs-3g debootstrap zfs-initramfs bind9-host \
+  ntfs-3g debootstrap bind9-host \
   lm-sensors cryptsetup borgmatic usbutils lsof initramfs-tools \
   lsb-release eject perl-doc ripgrep \
   strace psmisc network-manager sudo \
   openssh-server openssh-client \
-  memtest86+ grub-efi-amd64 arch-install-scripts efibootmgr
+  arch-install-scripts
 
 echo RESUME=none > /etc/initramfs-tools/conf.d/noresume.conf
 
-apt install -y linux-headers-amd64 linux-image-amd64 firmware-linux-nonfree
+# This step can be quite slow
+apt install -y memtest86+ grub-efi-amd64 efibootmgr \
+  linux-headers-amd64 linux-image-amd64 firmware-linux-nonfree
 
 # Set a user and password
 # and dont inherit the hostname...

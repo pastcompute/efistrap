@@ -2,6 +2,7 @@
 
 TARGET="$1"
 
+CACHEPROXY_PORT=8889
 EFISTRAP_DELAY=${EFISTRAP_DELAY:-5}
 
 MOUNTPOINT=/mnt/efistrap
@@ -103,8 +104,36 @@ echo
 echo "Continuing in $EFISTRAP_DELAY seconds..."
 sleep "$EFISTRAP_DELAY"
 
+echo Checking apt-cacher-ng
+mkdir -p apt-cache/{apt-cacher-ng,cache}
+cat > apt-cache/apt-cacher-ng/my.conf <<EOF
+CacheDir: $(pwd)/apt-cache/cache
+LogDir: $(pwd)/apt-cache/log
+SocketPath: $(pwd)/apt-cache/socket
+Port: $CACHEPROXY_PORT
+BindAddress: 127.0.0.1
+ExThreshold: 30
+PidFile: $(pwd)/apt-cache/pid
+EOF
+
+# Hacky but gets the job done
+PROXY_PID=$(test -e "$(pwd)/apt-cache/pid" && cat "$(pwd)/apt-cache/pid") || true
+if test -n "${PROXY_PID:-}" && ps -f "${PROXY_PID}" > /dev/null ; then
+  echo "Found running apt-cacher-ng"
+else
+  rm -f "$(pwd)/apt-cache/pid"
+  echo "Starting apt-cacher-ng"
+  if [ -n "${SUDO_USER:-}" ] ; then
+    runuser -u "${SUDO_USER:-USER}" -- /sbin/apt-cacher-ng -v -c apt-cache/apt-cacher-ng
+  else
+    /sbin/apt-cacher-ng -v -c apt-cache/apt-cacher-ng
+  fi
+fi
+echo "apt-cacher-ng pid=$(cat "$(pwd)/apt-cache/pid")"
+
 # We expect this will fail if any partitions are mounted or device is otherwise open
 # So it should protect the operating system drive
+# If not run with sudo, at this point we will also crash out, wipefs won't be in PATH
 wipefs -a "$TARGET"
 
 sgdisk -o -n 1:1M:+1G -t 1:0700 -c 1:EFI -n 2:+1M:0 -t 2:8300 -c 2:debian "$TARGET"
@@ -119,7 +148,11 @@ mount "${TARGET}2" $MOUNTPOINT2
 
 ./05_refind.sh
 
-debootstrap bookworm "$MOUNTPOINT2"
+# Examples of using apt-cacher-ng:
+# echo 'Acquire::http { Proxy "http://127.0.0.1:8889"; }' | sudo tee -a /etc/apt/apt.conf.d/proxy
+# http://http://127.0.0.1:8889/us.archive.ubuntu.com/ubuntu/
+
+debootstrap bookworm "$MOUNTPOINT2" http://127.0.0.1:$CACHEPROXY_PORT/deb.debian.org/debian/
 
 ./usb_chroot.sh bootstrap
 
@@ -130,3 +163,5 @@ debootstrap bookworm "$MOUNTPOINT2"
 ./25_efi_extras.sh
 
 ./30_default_boot.sh
+
+echo -e "\nNote: apt-cacher-ng running with pid=$(pwd)/apt-cache/pid\n"

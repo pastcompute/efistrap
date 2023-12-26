@@ -19,6 +19,13 @@ is_mount $MOUNTPOINT2/dev/pts || mount -v -t devpts pts "$MOUNTPOINT2/dev/pts"
 mkdir -p $MOUNTPOINT2/boot/efi
 is_mount $MOUNTPOINT2/boot/efi || mount -v -B "$MOUNTPOINT" $MOUNTPOINT2/boot/efi
 
+echo 'Acquire::http { Proxy "http://127.0.0.1:8889"; }' | sudo tee -a "$MOUNTPOINT2/etc/apt/apt.conf.d/proxy"
+
+function atexit_handler() {
+  rm -f "$MOUNTPOINT2/etc/apt/apt.conf.d/proxy"
+}
+trap atexit_handler EXIT
+
 if [ "$1" == "bootstrap" ] ; then
   mkdir -p "$MOUNTPOINT2/root"
   cp 10_bootstrap.sh "$MOUNTPOINT2/root"
@@ -28,3 +35,4 @@ else
   set -x
   chroot "$MOUNTPOINT2" "${@}"
 fi
+
